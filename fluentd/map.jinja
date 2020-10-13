@@ -1,0 +1,23 @@
+# -*- coding: utf-8 -*-
+# vim: ft=jinja
+{% import_yaml "fluentd/defaults.yaml" as default_settings %}
+{% set fluentd = salt['pillar.get']('fluentd', default=default_settings.fluentd, merge=True)%}
+{% set fluentd_osmap = salt['grains.filter_by']({
+    'Debian': {
+        'repo': 'deb http://packages.treasuredata.com/4/{% grains['os']|lower %}/{% grains['oscodename'] %}/ {% grains['oscodename'] %} contrib',
+        'type': 'apt',
+        'gpg-file': 'https://packages.treasuredata.com/GPG-KEY-td-agent'
+    },
+    'RedHat': {
+        'repo': 'http://packages.treasuredata.com/4/redhat/\$releasever/\$basearch',
+        'type': 'yum',
+        'gpg-file': 'https://packages.treasuredata.com/GPG-KEY-td-agent'
+    },
+    'default': {
+        'repo': '',
+        'type': 'gem',
+        'gpg-file': 'https://packages.treasuredata.com/GPG-KEY-td-agent'
+    },
+}, default=default) %}
+
+{% do fluentd.update( fluentd_osmap ) %}
