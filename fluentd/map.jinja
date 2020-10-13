@@ -2,9 +2,11 @@
 # vim: ft=jinja
 {% import_yaml "fluentd/defaults.yaml" as default_settings %}
 {% set fluentd = salt['pillar.get']('fluentd', default=default_settings.fluentd, merge=True)%}
+{% set os_name = grains.get('os')|lower %}
+{% set os_codename = grains.get('oscodename')|lower %}
 {% set fluentd_osmap = salt['grains.filter_by']({
     'Debian': {
-        'repo': 'deb http://packages.treasuredata.com/4/{% grains.get('os')|lower %}/{% grains.get('oscodename') %}/ {% grains.get('oscodename') %} contrib',
+        'repo': 'deb http://packages.treasuredata.com/4/{{ os_name }}/{{ os_codename }}/ {{ os_codename }} contrib',
         'type': 'apt',
         'gpg-file': 'https://packages.treasuredata.com/GPG-KEY-td-agent'
     },
