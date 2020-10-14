@@ -13,7 +13,7 @@ fluentd_package:
 {% for plugin in fluentd.plugins%}
 {{ plugin }}:
   gem.installed:
-{% if fluentd.type is not 'gem' %}
+{% if fluentd.type != 'gem' %}
     - gem_bin: {{ fluentd.prefix }}/bin/gem
 {% endif %}
 {% if fluentd.gem_proxy is defined %}
