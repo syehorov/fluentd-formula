@@ -50,6 +50,7 @@ fluentd_package:
     - makedirs: True
     - source: salt://fluentd/files/included.conf
     - backup: minion
+    - defaults: {{ data }}
     - watch_in:
       - service: {{ fluentd.service }}
 {% endfor %}
