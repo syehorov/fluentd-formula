@@ -45,7 +45,7 @@ fluentd_package:
 {% for name, data in included|dictsort %}
 {{ fluentd.config.base }}/{{ data.directory }}/{{ data.order }}-{{ name }}.conf:
   file.managed:
-    - templage: jinja
+    - template: jinja
     - mode: 644
     - makedirs: True
     - source: salt://fluentd/files/included.conf
