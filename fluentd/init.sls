@@ -39,6 +39,23 @@ fluentd_package:
     - require:
       - pkg: fluentd_package
 {% endif %}
+{% if fluentd.includes is defined %}
+{% for include_file in fluentd.includes %}
+{{ fluentd.config.base }}/{{ include_file.directory }}:
+  file.directory:
+    - mode: 755
+    - makedirs: True
+
+{{ fluentd.config.base }}/{{ include_file.directory }}/{{ include_file.order }}-{{ include_file }}.conf:
+  file_managed:
+    - templage: jinja
+    - mode: 644
+    - source: salt://fluentd/files/included.conf
+    - backup: minion
+    - watch_in:
+      - service: {{ fluentd.service }}
+{% endfor %}
+{% endif %}
 
 fluentd_service:
   service.running:
