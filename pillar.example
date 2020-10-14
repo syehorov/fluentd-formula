@@ -1,0 +1,37 @@
+---
+fluentd:
+  install_packages: true
+  config:
+    base: /etc/td-agent
+    filename: td-agent.conf
+  service: td-agent
+  forward:
+    enabled: False
+  unix:
+    enabled: False
+  http:
+    enabled: False
+  debug_agent:
+    enabled: False
+  plugins:
+    - fluent-plugin-filter-parse-postfix
+    - fluent-plugin-grok-parser
+  includes:
+    - mail:
+        directory: 'conf.d'
+        order: 10
+        content:
+          filter:
+            name: 'postfix.maillog'
+            content:
+              - '@type parse_postfix'
+          source:
+            content:
+              - '@type tail'
+              - 'path /var/log/mail.log'
+              - 'tag postfix.maillog'
+              - 'format none'
+          match:
+            name: postfix.maillog
+            content:
+              - '@type stdout'

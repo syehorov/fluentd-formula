@@ -15,4 +15,3 @@ fluentd:
     enabled: False
   debug_agent:
     enabled: False
-  

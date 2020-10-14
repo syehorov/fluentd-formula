@@ -4,14 +4,28 @@
 fluentd_package:
   pkg.installed:
     - pkgs:
-      - {{ fluentd.package | json }}
+      - {{ fluentd.package }}
     - watch_in:
       - service: {{ fluentd.service }}
 {% endif %}
 
-{% if fluentd.get('plugins') %}
-  pkg.installed:
-    - pkgs: {{ ejabberd.extra_packages | json }}
+{% if fluentd.plugins is defined %}
+{% for plugin in fluentd.plugins%}
+{{ plugin }}:
+  gem.installed:
+{% if fluentd.type is not 'gem' %}
+    - gem_bin: {{ fluentd.prefix }}/bin/gem
+{% endif %}
+{% if fluentd.gem_proxy is defined %}
+    - proxy: {{ fluentd.gem_proxy }}
+{% endif %}
+{% if plugin.version is defined %}
+    - source: {{ plugin.version }}
+{% endif %}
+{% if plugin.source is defined %}
+    - source: {{ plugin.source }}
+{% endif %}
+{% endfor %}
 {% endif %}
 
 {{ fluentd.config.base }}/{{ fluentd.config.filename }}:
